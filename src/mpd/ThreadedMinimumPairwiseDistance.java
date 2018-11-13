@@ -2,8 +2,10 @@ package mpd;
 
 public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance {
 
+    // global value of minimum result.
     long globalResult = Integer.MAX_VALUE;
 
+    // update global minimum
     public synchronized void updateGlobalResult(long result) {
         if (result < this.globalResult) {
             this.globalResult = result;
@@ -13,18 +15,23 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
 
     @Override
     public long minimumPairwiseDistance(int[] values) {
+        if (values == null) {
+            return globalResult;
+        }
 
+        // creating 4 threads
+        Thread LowerLeftThread = new Thread(new LowerLeft(values));
+        Thread LowerRightThread = new Thread(new LowerRight(values));
+        Thread MiddleThread = new Thread(new Middle(values));
+        Thread TopRightThread = new Thread(new TopRight(values));
 
-        Thread LowerLeftThread = new Thread(new LowerLeft(values, globalResult));
-        Thread LowerRightThread = new Thread(new LowerRight(values, globalResult));
-        Thread MiddleThread = new Thread(new Middle(values, globalResult));
-        Thread TopRightThread = new Thread(new TopRight(values, globalResult));
-
+        // Starting the threads
         LowerLeftThread.start();
         LowerRightThread.start();
         MiddleThread.start();
         TopRightThread.start();
 
+        // Threads wait for each other to finish
         try {
             LowerLeftThread.join();
             LowerRightThread.join();
@@ -37,15 +44,13 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
 
     }
 
-
+    // lowerleft thread process
     public class LowerLeft implements Runnable {
         long result = Integer.MAX_VALUE;
         int[] value;
-        //long globalResult;
 
-        public LowerLeft(int[] values, long globalResult) {
+        public LowerLeft(int[] values) {
             this.value = values;
-            //this.globalResult = globalResult;
         }
         public void run() {
             for (int i = 0; i < (value.length / 2); ++i) {
@@ -61,14 +66,13 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
         }
     }
 
+    // lowerright thread process
     public class LowerRight implements Runnable {
         long result = Integer.MAX_VALUE;
         int[] value;
-        //long globalResult;
 
-        public LowerRight(int[] values, long globalResult) {
+        public LowerRight(int[] values) {
             this.value = values;
-            //this.globalResult = globalResult;
         }
         public void run() {
             for (int i = (value.length / 2); i < value.length; ++i) {
@@ -84,18 +88,17 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
         }
     }
 
+    // middle thread process
     public class Middle implements Runnable {
         long result = Integer.MAX_VALUE;
         int[] value;
-        //long globalResult;
 
-        public Middle(int[] values, long globalResult) {
-            this.value = value;
-            //this.globalResult = globalResult;
+        public Middle(int[] values) {
+            this.value = values;
         }
         public void run() {
-            for (int i = (value.length / 2); i < value.length; ++i) {
-                for (int j = 0; j < (value.length / 2); ++j) {
+            for (int j = 0; j  + (value.length / 2) < value.length; ++j) {
+                for (int i = (value.length) / 2; (i <= j + (value.length / 2)); ++i) {
                     // Gives us all the pairs (i, j) where 0 <= j < i < values.length
                     long diff = Math.abs(value[i] - value[j]);
                     if (diff < result) {
@@ -107,14 +110,13 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
         }
     }
 
+    // topright thread process
     public class TopRight implements Runnable {
         long result = Integer.MAX_VALUE;
         int[] value;
-        //long globalResult;
 
-        public TopRight(int[] values, long globalResult) {
+        public TopRight(int[] values) {
             this.value = values;
-            //this.globalResult = globalResult;
         }
         public void run() {
             for (int i = (value.length / 2); i < value.length; ++i) {
