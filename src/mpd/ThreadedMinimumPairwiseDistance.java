@@ -53,7 +53,8 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
             this.value = values;
         }
         public void run() {
-            for (int i = 0; i < (value.length / 2); ++i) {
+            int halfLength = value.length / 2;
+            for (int i = 0; i < halfLength; ++i) {
                 for (int j = 0; j < i; ++j) {
                     // Gives us all the pairs (i, j) where 0 <= j < i < values.length
                     long diff = Math.abs(value[i] - value[j]);
@@ -75,8 +76,9 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
             this.value = values;
         }
         public void run() {
-            for (int i = (value.length / 2); i < value.length; ++i) {
-                for (int j = 0; j + (value.length / 2) < i; ++j) {
+            int halfLength = value.length / 2;
+            for (int i = halfLength; i < value.length; ++i) {
+                for (int j = 0; j + halfLength < i; ++j) {
                     // Gives us all the pairs (i, j) where 0 <= j < i < values.length
                     long diff = Math.abs(value[i] - value[j]);
                     if (diff < result) {
@@ -97,8 +99,9 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
             this.value = values;
         }
         public void run() {
-            for (int j = 0; j  + (value.length / 2) < value.length; ++j) {
-                for (int i = (value.length) / 2; (i <= j + (value.length / 2)); ++i) {
+            int halfLength = value.length / 2;
+            for (int j = 0; j  + halfLength < value.length; ++j) {
+                for (int i = (value.length) / 2; (i <= j + halfLength); ++i) {
                     // Gives us all the pairs (i, j) where 0 <= j < i < values.length
                     long diff = Math.abs(value[i] - value[j]);
                     if (diff < result) {
@@ -119,8 +122,9 @@ public class ThreadedMinimumPairwiseDistance implements MinimumPairwiseDistance 
             this.value = values;
         }
         public void run() {
-            for (int i = (value.length / 2); i < value.length; ++i) {
-                for (int j = (value.length / 2); j < i; ++j) {
+            int halfLength = value.length / 2;
+            for (int i = halfLength; i < value.length; ++i) {
+                for (int j = halfLength; j < i; ++j) {
                     // Gives us all the pairs (i, j) where 0 <= j < i < values.length
                     long diff = Math.abs(value[i] - value[j]);
                     if (diff < result) {

@@ -57,9 +57,11 @@ public class ThreadTimingTest {
         // either change the improvement factor from 3 to something like 1.5, or
         // try a different box
         // with more cores.
+
+        // Changed test with Nic's permission so that threadedTime < serialTime / 2 instead of 3.
         assertTrue(
                 "If this fails, see if the serial time is at least somewhat larger than the threaded time",
-                serialTime / 3 > threadedTime);
+                serialTime / 2 > threadedTime);
     }
 
 }
